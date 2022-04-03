@@ -1,0 +1,52 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id               String         @id @default(uuid())
+  email            String         @unique
+  name             String
+  username         String
+  password         String
+  ShoppingCart     ShoppingCart[]
+  loyaltySettingId Int            @default(1)
+  loyaltySetting   LoyaltySetting @relation(fields: [loyaltySettingId], references: [id])
+}
+
+model Product {
+  id           String         @id @default(uuid())
+  name         String         @unique
+  price        Float
+  description  String
+  mainImage    String
+  images       String[]
+  ShoppingCart ShoppingCart[]
+}
+
+model ShoppingCart {
+  id        String  @id @default(uuid())
+  product   Product @relation(fields: [productId], references: [id])
+  productId String
+  user      User    @relation(fields: [userId], references: [id])
+  userId    String
+  quantity  Int
+}
+
+model LoyaltySetting {
+  id              Int     @id @default(autoincrement())
+  title           String  @unique
+  hasPrivateCard  Boolean @default(false)
+  hasBirthdayGift Boolean @default(false)
+  hasEventTicket  Boolean @default(false)
+  isVip           Boolean @default(false)
+
+  User User[]
+}
