@@ -10,24 +10,47 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum UserStates {
+  ACTIVE
+  LOCKED
+}
+
 model User {
   id               String         @id @default(uuid())
   email            String         @unique
   name             String
   username         String
   password         String
+  state            UserStates     @default(ACTIVE)
   ShoppingCart     ShoppingCart[]
   loyaltySettingId Int            @default(1)
   loyaltySetting   LoyaltySetting @relation(fields: [loyaltySettingId], references: [id])
 }
 
+enum Category {
+  DONG_TRUNG_HA_THAO
+  YEN_SAO_THUONG_HANG
+  SAFFARON
+  NHAN_SAM
+  KHAC
+}
+
+enum ProductStates {
+  AVAILABLE
+  SOLD_OUT
+  COMING_SOON
+}
+
 model Product {
   id           String         @id @default(uuid())
   name         String         @unique
+  category     Category
   price        Float
   description  String
   mainImage    String
   images       String[]
+  sold         Int            @default(0)
+  state        ProductStates
   ShoppingCart ShoppingCart[]
 }
 
