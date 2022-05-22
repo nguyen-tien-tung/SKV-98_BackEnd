@@ -20,6 +20,9 @@ export class CreateProductDto {
   name: string;
 
   @IsNotEmpty()
+  origin: string;
+
+  @IsNotEmpty()
   @Transform((value) => Number(value))
   price: number;
 
@@ -30,11 +33,14 @@ export class CreateProductDto {
   mainImage: string;
 
   @IsNotEmpty()
+  mass: number;
+
+  @IsNotEmpty()
   images: string[];
 
   @IsEnum(Category)
   category: Category;
 
   @IsEnum(ProductStates)
-  state: ProductStates;
+  state?: ProductStates;
 }

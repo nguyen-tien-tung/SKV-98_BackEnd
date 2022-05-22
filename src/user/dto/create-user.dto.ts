@@ -5,14 +5,12 @@ import {
   Matches,
   MaxLength,
   MinLength,
+  IsNumber,
 } from 'class-validator';
 
 export class CreateUserDto {
-  @IsEmail()
-  email: string;
-
-  @IsNotEmpty()
-  name: string;
+  @IsNumber()
+  phoneNumber: number;
 
   @IsNotEmpty()
   username: string;
