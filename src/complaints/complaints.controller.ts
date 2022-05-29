@@ -28,7 +28,7 @@ export class ComplaintsController {
       });
     else
       user = this.usersService.user({
-        phoneNumber: +createComplaintDto.phoneNumberOrEmail,
+        phoneNumber: createComplaintDto.phoneNumberOrEmail,
       });
     return this.complaintsService.createCustomerComplaint({
       ...createComplaintDto,
@@ -58,7 +58,7 @@ export class ComplaintsController {
       });
     else
       user = this.usersService.user({
-        phoneNumber: +updateComplaintDto.phoneNumberOrEmail,
+        phoneNumber: updateComplaintDto.phoneNumberOrEmail,
       });
     return this.complaintsService.updateCustomerComplaint({
       where: { id },

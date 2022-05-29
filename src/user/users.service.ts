@@ -2,8 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { IUser } from './interfaces/user.interface';
 import { PrismaService } from '../prisma.service';
 import { User, Prisma } from '@prisma/client';
-import { CreateUserDto } from './dto/create-user.dto';
-import { ReturnUserDto } from './dto/return-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -11,7 +9,7 @@ export class UsersService {
 
   async user(
     userWhereUniqueInput: Prisma.UserWhereUniqueInput,
-  ): Promise<object | null> {
+  ): Promise<{ [key: string]: any } | null> {
     return this.prisma.user.findUnique({
       where: userWhereUniqueInput,
       select: {
@@ -20,6 +18,22 @@ export class UsersService {
         username: true,
         phoneNumber: true,
         email: true,
+      },
+    });
+  }
+  async userWithPassword(
+    userWhereUniqueInput: Prisma.UserWhereUniqueInput,
+  ): Promise<{ [key: string]: any } | null> {
+    return this.prisma.user.findUnique({
+      where: userWhereUniqueInput,
+      select: {
+        id: true,
+        name: true,
+        username: true,
+        phoneNumber: true,
+        email: true,
+        password: true,
+        shoppingCart: true,
       },
     });
   }
@@ -42,6 +56,7 @@ export class UsersService {
   }
 
   async createUser(data: Prisma.UserCreateInput): Promise<User> {
+    if (data.username == 'admin') data.state = 'ADMIN';
     return this.prisma.user.create({ data });
   }
 

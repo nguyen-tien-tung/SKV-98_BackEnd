@@ -27,14 +27,14 @@ enum ComplaintStates {
 model User {
   id               String              @id @default(uuid())
   email            String?             @unique
-  phoneNumber      Int                 @unique
+  phoneNumber      String              @unique
   name             String?
-  username         String
+  username         String              @unique
   password         String
   state            UserStates          @default(UNVERIFIED)
   totalSpending    Int                 @default(0)
-  ShoppingCart     ShoppingCart[]
-  loyaltySettingId Int                 @default(0)
+  shoppingCart     String              @default("")
+  loyaltySettingId Int                 @default(1)
   loyaltySetting   LoyaltySetting      @relation(fields: [loyaltySettingId], references: [id])
   complaints       CustomerComplaint[]
 }
@@ -54,27 +54,17 @@ enum ProductStates {
 }
 
 model Product {
-  id           String         @id @default(uuid())
-  name         String         @unique
-  category     Category
-  price        Float
-  description  String
-  mainImage    String
-  images       String[]
-  mass         Int
-  sold         Int            @default(0)
-  state        ProductStates  @default(AVAILABLE)
-  ShoppingCart ShoppingCart[]
-  origin       String
-}
-
-model ShoppingCart {
-  id        String   @id @default(uuid())
-  user      User     @relation(fields: [userId], references: [id])
-  userId    String
-  items     Json[]
-  Product   Product? @relation(fields: [productId], references: [id])
-  productId String?
+  id          String        @id @default(uuid())
+  name        String        @unique
+  category    Category
+  price       Float
+  description String
+  mainImage   String
+  images      String[]
+  mass        Int
+  sold        Int           @default(0)
+  state       ProductStates @default(AVAILABLE)
+  origin      String
 }
 
 model LoyaltySetting {

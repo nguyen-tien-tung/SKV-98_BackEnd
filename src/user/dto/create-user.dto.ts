@@ -6,11 +6,12 @@ import {
   MaxLength,
   MinLength,
   IsNumber,
+  IsBoolean,
 } from 'class-validator';
 
 export class CreateUserDto {
-  @IsNumber()
-  phoneNumber: number;
+  @IsNotEmpty()
+  phoneNumber: string;
 
   @IsNotEmpty()
   username: string;
