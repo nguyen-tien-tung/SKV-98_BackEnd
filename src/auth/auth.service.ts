@@ -19,7 +19,6 @@ export class AuthService {
       phoneNumber: usernameOrPhoneNumber,
     });
     if (!user) {
-      console.log('phoneNumber failed');
       user = await this.usersService.userWithPassword({
         username: usernameOrPhoneNumber,
       });

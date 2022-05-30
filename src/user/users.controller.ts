@@ -1,13 +1,25 @@
 import { Prisma } from '@prisma/client';
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Request,
+  UseGuards,
+} from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 
 import { IUser } from './interfaces/user.interface';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { ReturnUserDto } from './dto/return-user.dto';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @Controller('user')
+@UseGuards(JwtAuthGuard)
 export class UsersController {
   constructor(private usersService: UsersService) {}
 
@@ -30,8 +42,17 @@ export class UsersController {
   }
 
   @Get()
-  findAll(): Promise<ReturnUserDto[]> {
+  async findAll(): Promise<ReturnUserDto[]> {
     return this.usersService.users({});
+  }
+
+  @Patch()
+  async updateUser(@Request() req: any) {
+    const user = await this.usersService.user({ id: req.user.userId });
+    return this.usersService.updateUser({
+      where: { id: req.user.userId },
+      data: { ...user, ...req.body },
+    });
   }
 
   @Delete()

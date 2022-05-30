@@ -33,7 +33,7 @@ model User {
   password         String
   state            UserStates          @default(UNVERIFIED)
   totalSpending    Int                 @default(0)
-  shoppingCart     String              @default("")
+  shoppingCart     Json                @default("{}")
   loyaltySettingId Int                 @default(1)
   loyaltySetting   LoyaltySetting      @relation(fields: [loyaltySettingId], references: [id])
   complaints       CustomerComplaint[]

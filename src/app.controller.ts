@@ -10,10 +10,14 @@ import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth/auth.service';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
 import { UnauthorizedException } from '@nestjs/common';
+import { UsersService } from './user/users.service';
 
 @Controller()
 export class AppController {
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private usersService: UsersService,
+  ) {}
 
   @Post('auth/login')
   async login(@Request() req) {
@@ -29,7 +33,7 @@ export class AppController {
 
   @UseGuards(JwtAuthGuard)
   @Get('profile')
-  getProfile(@Request() req) {
-    return req.user; // user = return from JwtStrategy.validate
+  async getProfile(@Request() req) {
+    return await this.usersService.user({ id: req.user.userId });
   }
 }

@@ -18,6 +18,7 @@ export class UsersService {
         username: true,
         phoneNumber: true,
         email: true,
+        shoppingCart: true,
       },
     });
   }
