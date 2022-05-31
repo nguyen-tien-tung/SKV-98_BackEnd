@@ -37,6 +37,7 @@ model User {
   loyaltySettingId Int                 @default(1)
   loyaltySetting   LoyaltySetting      @relation(fields: [loyaltySettingId], references: [id])
   complaints       CustomerComplaint[]
+  Order            Order[]
 }
 
 enum Category {
@@ -90,4 +91,20 @@ model Voucher {
   id       String       @id @default(uuid())
   type     VoucherTypes
   maxValue Int          @default(0)
+}
+
+enum PaymentMethods {
+  CASH
+  BANK_TRANSFER
+}
+
+model Order {
+  id            String         @id @default(uuid())
+  fullName      String
+  phoneNumber   String
+  address       String
+  note          String         @default("")
+  paymentMethod PaymentMethods
+  userId        String
+  user          User           @relation(fields: [userId], references: [id])
 }
