@@ -38,6 +38,10 @@ model User {
   loyaltySetting   LoyaltySetting      @relation(fields: [loyaltySettingId], references: [id])
   complaints       CustomerComplaint[]
   Order            Order[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
 }
 
 enum Category {
@@ -76,7 +80,10 @@ model LoyaltySetting {
   hasEventTicket  Boolean @default(false)
   isVip           Boolean @default(false)
 
-  User User[]
+  // Point gain per paid product
+  pointGainPerItem Int    @unique
+  pointRequirement Int    @unique
+  User             User[]
 }
 
 model CustomerComplaint {
@@ -85,6 +92,10 @@ model CustomerComplaint {
   user    User            @relation(fields: [userId], references: [id])
   content String
   state   ComplaintStates @default(PENDING)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
 }
 
 model Voucher {
@@ -98,13 +109,26 @@ enum PaymentMethods {
   BANK_TRANSFER
 }
 
+enum OrderRequestState {
+  PENDING
+  RESOLVED
+  CANCELLED
+  DONE
+}
+
 model Order {
-  id            String         @id @default(uuid())
+  id            String            @id @default(uuid())
   fullName      String
   phoneNumber   String
   address       String
-  note          String         @default("")
+  note          String            @default("")
   paymentMethod PaymentMethods
+  items         Json
   userId        String
-  user          User           @relation(fields: [userId], references: [id])
+  user          User              @relation(fields: [userId], references: [id])
+  state         OrderRequestState @default(PENDING)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
 }

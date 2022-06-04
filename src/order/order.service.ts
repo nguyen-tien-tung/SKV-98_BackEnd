@@ -48,6 +48,20 @@ export class OrderService {
     });
   }
 
+  async updateOrders(params: {
+    data: Prisma.XOR<
+      Prisma.OrderUpdateManyMutationInput,
+      Prisma.OrderUncheckedUpdateManyInput
+    >;
+    where: Prisma.OrderWhereInput;
+  }): Promise<Prisma.BatchPayload> {
+    const { data, where } = params;
+    return this.prisma.order.updateMany({
+      data,
+      where,
+    });
+  }
+
   async deleteOrder(where: Prisma.OrderWhereUniqueInput): Promise<Order> {
     return this.prisma.order.delete({
       where,

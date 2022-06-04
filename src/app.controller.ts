@@ -21,14 +21,16 @@ export class AppController {
 
   @Post('auth/login')
   async login(@Request() req) {
-    const user = await this.authService.validateUser(
-      req.body.usernameOrPhoneNumber,
-      req.body.password,
-    );
-    if (!user) {
-      throw new UnauthorizedException();
-    }
-    return this.authService.login(user);
+    try {
+      const user = await this.authService.validateUser(
+        req.body.usernameOrPhoneNumber,
+        req.body.password,
+      );
+      if (!user) {
+        throw new UnauthorizedException();
+      }
+      return this.authService.login(user);
+    } catch (error) {}
   }
 
   @UseGuards(JwtAuthGuard)

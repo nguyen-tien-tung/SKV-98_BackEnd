@@ -14,6 +14,7 @@ import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { UsersService } from 'src/user/users.service';
+import { OrderRequestState } from '@prisma/client';
 
 @Controller('order')
 @UseGuards(JwtAuthGuard)
@@ -27,10 +28,16 @@ export class OrderController {
   async create(@Body() createOrderDto: CreateOrderDto, @Request() req: any) {
     const user = await this.usersService.user({ id: req.user.userId });
     if (!user) return;
-    return this.orderService.createOrder({
+    const returnedOrder = this.orderService.createOrder({
       ...createOrderDto,
       userId: req.user.userId,
+      items: user.shoppingCart,
     });
+    this.usersService.updateUser({
+      where: { id: req.user.userId },
+      data: { ...user, shoppingCart: {} },
+    });
+    return returnedOrder;
   }
 
   @Get()
@@ -48,6 +55,20 @@ export class OrderController {
     return this.orderService.updateOrder({
       where: { id },
       data: updateOrderDto,
+    });
+  }
+
+  @Post('updateMany')
+  updateMany(@Body() reqBody: { ids: string[]; newState: OrderRequestState }) {
+    return this.orderService.updateOrders({
+      where: {
+        id: {
+          in: reqBody.ids,
+        },
+      },
+      data: {
+        state: reqBody.newState,
+      },
     });
   }
 

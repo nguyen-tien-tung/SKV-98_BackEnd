@@ -8,9 +8,12 @@ import {
   Patch,
   Post,
   Request,
+  Res,
   UseGuards,
+  HttpStatus,
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
+import { Response } from 'express';
 
 import { IUser } from './interfaces/user.interface';
 import { UsersService } from './users.service';
@@ -24,15 +27,32 @@ export class UsersController {
   constructor(private usersService: UsersService) {}
 
   @Post()
-  async create(@Body() userData: CreateUserDto): Promise<ReturnUserDto> {
+  async create(
+    @Body() userData: CreateUserDto,
+    @Res() res: Response,
+  ): Promise<ReturnUserDto> {
     try {
       const salt = await bcrypt.genSalt();
       userData.password = await bcrypt.hash(userData.password, salt);
       const userCreated = await this.usersService.createUser(userData);
+      // if (userCreated) {
       const { password, ...rest } = userCreated;
       return rest;
-    } catch (error) {
-      console.error(error);
+      // }
+    } catch (e) {
+      if (e instanceof Prisma.PrismaClientKnownRequestError) {
+        if (e.code === 'P2002') {
+          console.log(
+            'There is a unique constraint violation, a new user cannot be created with this email',
+          );
+        }
+      }
+      res
+        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .send(
+          'There is a unique constraint violation, a new user cannot be created',
+        );
+      // throw e;
     }
   }
 

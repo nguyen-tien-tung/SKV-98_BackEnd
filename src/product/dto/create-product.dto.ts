@@ -23,7 +23,6 @@ export class CreateProductDto {
   origin: string;
 
   @IsNotEmpty()
-  @Transform((value) => Number(value))
   price: number;
 
   @IsNotEmpty()
