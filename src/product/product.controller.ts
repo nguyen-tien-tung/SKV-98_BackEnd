@@ -6,6 +6,8 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
+  Request,
 } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -34,6 +36,14 @@ export class ProductController {
   findByCategory(@Param('category') category: Category) {
     return this.productService.products({ where: { category } });
   }
+
+  @Get('search-by-name')
+  findByName(@Query('name') name: string) {
+    return this.productService.products({
+      where: { name: { startsWith: name, mode: 'insensitive' } },
+    });
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.productService.product({ id });

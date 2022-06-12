@@ -26,6 +26,7 @@ enum ComplaintStates {
 
 model User {
   id               String              @id @default(uuid())
+  avatar           String?
   email            String?             @unique
   phoneNumber      String              @unique
   name             String?
@@ -38,6 +39,10 @@ model User {
   loyaltySetting   LoyaltySetting      @relation(fields: [loyaltySettingId], references: [id])
   complaints       CustomerComplaint[]
   Order            Order[]
+
+  fullName    String?
+  address     String?
+  dateOfBirth String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

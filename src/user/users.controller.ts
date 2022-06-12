@@ -71,7 +71,12 @@ export class UsersController {
     const user = await this.usersService.user({ id: req.user.userId });
     return this.usersService.updateUser({
       where: { id: req.user.userId },
-      data: { ...user, ...req.body },
+      data: {
+        ...user,
+        ...req.body,
+        username: user.username,
+        fullName: user.fullName ?? req.body.fullName,
+      },
     });
   }
 

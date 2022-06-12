@@ -19,6 +19,7 @@ export class UsersService {
         phoneNumber: true,
         email: true,
         shoppingCart: true,
+        loyaltySetting: true,
       },
     });
   }
