@@ -40,7 +40,6 @@ model User {
   complaints       CustomerComplaint[]
   Order            Order[]
 
-  fullName    String?
   address     String?
   dateOfBirth String?
 
@@ -123,7 +122,7 @@ enum OrderRequestState {
 
 model Order {
   id            String            @id @default(uuid())
-  fullName      String
+  name          String
   phoneNumber   String
   address       String
   note          String            @default("")

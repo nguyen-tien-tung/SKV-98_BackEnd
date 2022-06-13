@@ -1,3 +1,4 @@
+import { Transform } from 'class-transformer';
 import { IsNotEmpty, IsNumber } from 'class-validator';
 export class CreateLoyaltySettingDto {
   @IsNotEmpty()
@@ -16,10 +17,10 @@ export class CreateLoyaltySettingDto {
   isVip: boolean;
 
   @IsNotEmpty()
-  @IsNumber()
+  @Transform(({ value }) => +value)
   pointGainPerItem: number;
 
   @IsNotEmpty()
-  @IsNumber()
+  @Transform(({ value }) => +value)
   pointRequirement: number;
 }

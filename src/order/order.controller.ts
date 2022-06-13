@@ -33,6 +33,7 @@ export class OrderController {
       userId: req.user.userId,
       items: user.shoppingCart,
     });
+    delete user.loyaltySetting;
     this.usersService.updateUser({
       where: { id: req.user.userId },
       data: { ...user, shoppingCart: {} },

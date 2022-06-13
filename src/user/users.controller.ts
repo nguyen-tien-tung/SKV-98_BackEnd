@@ -68,16 +68,20 @@ export class UsersController {
 
   @Patch()
   async updateUser(@Request() req: any) {
-    const user = await this.usersService.user({ id: req.user.userId });
-    return this.usersService.updateUser({
-      where: { id: req.user.userId },
-      data: {
-        ...user,
-        ...req.body,
-        username: user.username,
-        fullName: user.fullName ?? req.body.fullName,
-      },
-    });
+    try {
+      const user = await this.usersService.user({ id: req.user.userId });
+      console.log(req.body);
+      delete req.body.loyaltySetting;
+      console.log(req.body);
+      return this.usersService.updateUser({
+        where: { id: req.user.userId },
+        data: {
+          ...req.body,
+          username: user.username,
+          // name: user.name ?? req.body.name,
+        },
+      });
+    } catch (error) {}
   }
 
   @Delete()

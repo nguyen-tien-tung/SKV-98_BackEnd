@@ -6,7 +6,7 @@ enum PaymentMethods {
 }
 export class CreateOrderDto {
   @IsNotEmpty()
-  fullName: string;
+  name: string;
 
   @IsNotEmpty()
   phoneNumber: string;

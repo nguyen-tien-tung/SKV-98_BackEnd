@@ -20,6 +20,8 @@ export class UsersService {
         email: true,
         shoppingCart: true,
         loyaltySetting: true,
+        address: true,
+        dateOfBirth: true,
       },
     });
   }
@@ -34,8 +36,12 @@ export class UsersService {
         username: true,
         phoneNumber: true,
         email: true,
-        password: true,
         shoppingCart: true,
+        loyaltySetting: true,
+        address: true,
+        dateOfBirth: true,
+
+        password: true,
       },
     });
   }
@@ -66,11 +72,13 @@ export class UsersService {
     where: Prisma.UserWhereUniqueInput;
     data: Prisma.UserUpdateInput;
   }): Promise<User> {
-    const { where, data } = params;
-    return this.prisma.user.update({
-      data,
-      where,
-    });
+    try {
+      const { where, data } = params;
+      return this.prisma.user.update({
+        data,
+        where,
+      });
+    } catch (error) {}
   }
 
   async deleteUser(where: Prisma.UserWhereUniqueInput): Promise<User> {
