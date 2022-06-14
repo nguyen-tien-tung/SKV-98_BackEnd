@@ -22,6 +22,8 @@ export class UsersService {
         loyaltySetting: true,
         address: true,
         dateOfBirth: true,
+        totalPoints: true,
+        loyaltySettingId: true,
       },
     });
   }
@@ -38,9 +40,10 @@ export class UsersService {
         email: true,
         shoppingCart: true,
         loyaltySetting: true,
+        loyaltySettingId: true,
         address: true,
         dateOfBirth: true,
-
+        totalPoints: true,
         password: true,
       },
     });

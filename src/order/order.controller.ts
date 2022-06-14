@@ -1,3 +1,4 @@
+import { ProductService } from './../product/product.service';
 import {
   Controller,
   Get,
@@ -15,6 +16,7 @@ import { UpdateOrderDto } from './dto/update-order.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { UsersService } from 'src/user/users.service';
 import { OrderRequestState } from '@prisma/client';
+import { LoyaltySettingService } from 'src/loyalty-setting/loyalty-setting.service';
 
 @Controller('order')
 @UseGuards(JwtAuthGuard)
@@ -22,6 +24,8 @@ export class OrderController {
   constructor(
     private readonly orderService: OrderService,
     private readonly usersService: UsersService,
+    private readonly productService: ProductService,
+    private readonly loyaltySettingService: LoyaltySettingService,
   ) {}
 
   @Post()
@@ -60,17 +64,58 @@ export class OrderController {
   }
 
   @Post('updateMany')
-  updateMany(@Body() reqBody: { ids: string[]; newState: OrderRequestState }) {
-    return this.orderService.updateOrders({
-      where: {
-        id: {
-          in: reqBody.ids,
+  async updateMany(
+    @Body() reqBody: { ids: string[]; newState: OrderRequestState },
+  ) {
+    try {
+      const { count } = await this.orderService.updateOrders({
+        where: {
+          id: {
+            in: reqBody.ids,
+          },
         },
-      },
-      data: {
-        state: reqBody.newState,
-      },
-    });
+        data: {
+          state: reqBody.newState,
+        },
+      });
+      if (count > 0 && reqBody.newState == 'DONE') {
+        const orders = await this.orderService.orders({
+          where: { id: { in: reqBody.ids } },
+        });
+        orders.forEach(async (order) => {
+          const user = await this.usersService.user({ id: order.userId });
+          const nextLoyaltyLevel =
+            await this.loyaltySettingService.loyaltySetting({
+              id: user.loyaltySettingId + 1,
+            });
+          const products = await this.productService.products({
+            where: { id: { in: Object.keys(order.items) } },
+          });
+          let pointsGain = 0;
+          products.forEach(async (product) => {
+            pointsGain +=
+              product.price * 0.01 * user.loyaltySetting.pointGainPerItem;
+          });
+          await this.usersService.updateUser({
+            where: { id: user.id },
+            data: {
+              totalPoints: user.totalPoints + pointsGain,
+              loyaltySetting: {
+                connect: {
+                  id:
+                    nextLoyaltyLevel &&
+                    user.totalPoints + pointsGain >=
+                      nextLoyaltyLevel.pointRequirement
+                      ? nextLoyaltyLevel.id
+                      : user.loyaltySettingId,
+                },
+              },
+            },
+          });
+        });
+      }
+      return { count };
+    } catch (error) {}
   }
 
   @Delete(':id')
