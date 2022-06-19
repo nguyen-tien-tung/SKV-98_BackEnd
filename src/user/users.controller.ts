@@ -70,9 +70,7 @@ export class UsersController {
   async updateUser(@Request() req: any) {
     try {
       const user = await this.usersService.user({ id: req.user.userId });
-      console.log(req.body);
       delete req.body.loyaltySetting;
-      console.log(req.body);
       return this.usersService.updateUser({
         where: { id: req.user.userId },
         data: {
