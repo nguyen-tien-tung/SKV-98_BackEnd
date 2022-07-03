@@ -9,6 +9,8 @@ import { ComplaintsModule } from './complaints/complaints.module';
 import { VoucherModule } from './voucher/voucher.module';
 import { OrderModule } from './order/order.module';
 import { LoyaltySettingModule } from './loyalty-setting/loyalty-setting.module';
+import { APP_GUARD } from '@nestjs/core';
+import { RolesGuard } from './roles.guard';
 
 @Module({
   imports: [
@@ -22,6 +24,12 @@ import { LoyaltySettingModule } from './loyalty-setting/loyalty-setting.module';
     LoyaltySettingModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: RolesGuard,
+    // },
+  ],
 })
 export class AppModule {}
